@@ -35,7 +35,7 @@ namespace LibraryApi
                     options.JsonSerializerOptions.IgnoreNullValues = true;
                 });
 
-            services.AddTransient<ISystemTime, SystemTime>();
+            services.AddSingleton<ISystemTime, SystemTime>();
 
             services.AddDbContext<LibraryDataContext>(options =>
 
