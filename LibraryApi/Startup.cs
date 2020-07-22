@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using AutoMapper;
+using LibraryApi.Controllers;
 using LibraryApi.Domain;
+using LibraryApi.Profiles;
 using LibraryApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using RabbitMqUtils;
 
 namespace LibraryApi
 {
@@ -33,6 +38,7 @@ namespace LibraryApi
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.IgnoreNullValues = true;
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
             services.AddSingleton<ISystemTime, SystemTime>();
@@ -42,6 +48,23 @@ namespace LibraryApi
                 options.UseSqlServer(Configuration.GetConnectionString("LibraryDatabase"))
             ) ;
 
+            services.AddScoped<IMapBooks, BooksEfMapper>();
+            var mappingConfig = new MapperConfiguration(mappingConfig =>
+            {
+                mappingConfig.AddProfile(new BooksProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton<IMapper>(mapper);
+            services.AddSingleton<MapperConfiguration>(mappingConfig);
+            services.AddTransient<ILookupOnCallDevelopers, TeamsOnCallDeveloperLookup>();
+
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = Configuration.GetValue<string>("redisHost");
+            });
+            services.AddRabbit(Configuration);
+            services.AddTransient<IWriteToTheMessageQueue, RabbitMQReservationProcessor>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo()

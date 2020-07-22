@@ -1,0 +1,17 @@
+version: "3.7"
+services: 
+    redis:
+        image: redis:latest
+        ports:
+            - "6379:6379"  
+    sql:
+        image: junakhatri/librarysql:latest
+        ports:
+            - "1433:1433"
+    rabbit:
+        image: rabbitmq:3-management
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+
+

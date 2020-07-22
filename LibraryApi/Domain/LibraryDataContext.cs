@@ -11,6 +11,7 @@ namespace LibraryApi.Domain
         public LibraryDataContext(DbContextOptions<LibraryDataContext> ctx): base(ctx) { }
 
         public virtual DbSet<Book> Books { get; set; }
+        public virtual DbSet<Reservation> Reservations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -18,11 +19,11 @@ namespace LibraryApi.Domain
             modelBuilder.Entity<Book>().Property(b => b.Author).HasMaxLength(200);
             // etc. etc.
 
-            modelBuilder.Entity<Book>().HasData(
-                new Book {  Id =1, Title="Walden", Author="Thoreau", Genre="Non-Fiction", InStock=true, NumberOfPages = 128},
-                new Book {  Id =2, Title="Nature", Author="Emerson", Genre="Non-Fiction", InStock=true, NumberOfPages = 328}
+            //modelBuilder.Entity<Book>().HasData(
+            //    new Book {  Id =1, Title="Walden", Author="Thoreau", Genre="Non-Fiction", InStock=true, NumberOfPages = 128},
+            //    new Book {  Id =2, Title="Nature", Author="Emerson", Genre="Non-Fiction", InStock=true, NumberOfPages = 328}
 
-                );
+            //    );
 
         }
     }

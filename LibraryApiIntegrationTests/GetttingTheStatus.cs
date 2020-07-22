@@ -15,6 +15,7 @@ namespace LibraryApiIntegrationTests
         {
             _client = factory.CreateClient();
         }
+
         [Fact]
         public async Task CorrectStatuscode()
         {
@@ -22,6 +23,7 @@ namespace LibraryApiIntegrationTests
             Assert.True(response.IsSuccessStatusCode); //anything from 200-299
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
+
         [Fact]
         public async Task HasCorrectRepresentation()
         {
