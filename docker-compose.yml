@@ -1,17 +1,42 @@
 version: "3.7"
 services: 
+    api:
+        image: jeffrygonzalez/libraryapi
+        depends_on:
+            - redis
+            - sql
+            - rabbit
+        ports:
+            - "80:80"
+        environment: 
+            - ConnectionStrings__LibraryDatabase=server=sql;database=library;user=sa;password=TokyoJoe138!
+            - redisHost=localhost
+            - rabbit:Hostname=rabbit
+            - rabbit:UserName=guest
+            - rabbit:Password=guest
+            - rabbit:VHost=/
+        networks: 
+            - my-network
     redis:
         image: redis:latest
         ports:
             - "6379:6379"  
+        networks: 
+            - my-network
     sql:
-        image: junakhatri/librarysql:latest
+        image: junakhatri/librarysql-prod:latest
         ports:
             - "1433:1433"
+        networks: 
+            - my-network
     rabbit:
         image: rabbitmq:3-management
         ports:
             - "5672:5672"
             - "15672:15672"
-
+        networks: 
+            - my-network
+networks: 
+    my-network:
+        driver: bridge
 

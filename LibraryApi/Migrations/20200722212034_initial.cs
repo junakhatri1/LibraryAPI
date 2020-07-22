@@ -3,19 +3,26 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LibraryApi.Migrations
 {
-    public partial class reservations : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
-                table: "Books",
-                keyColumn: "Id",
-                keyValue: 1);
-
-            migrationBuilder.DeleteData(
-                table: "Books",
-                keyColumn: "Id",
-                keyValue: 2);
+            migrationBuilder.CreateTable(
+                name: "Books",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(maxLength: 200, nullable: true),
+                    Author = table.Column<string>(maxLength: 200, nullable: true),
+                    Genre = table.Column<string>(nullable: true),
+                    NumberOfPages = table.Column<int>(nullable: false),
+                    InStock = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Books", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Reservations",
@@ -37,17 +44,10 @@ namespace LibraryApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Books");
+
+            migrationBuilder.DropTable(
                 name: "Reservations");
-
-            migrationBuilder.InsertData(
-                table: "Books",
-                columns: new[] { "Id", "Author", "Genre", "InStock", "NumberOfPages", "Title" },
-                values: new object[] { 1, "Thoreau", "Non-Fiction", true, 128, "Walden" });
-
-            migrationBuilder.InsertData(
-                table: "Books",
-                columns: new[] { "Id", "Author", "Genre", "InStock", "NumberOfPages", "Title" },
-                values: new object[] { 2, "Emerson", "Non-Fiction", true, 328, "Nature" });
         }
     }
 }
